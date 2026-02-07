@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HACKER — Face Landing (Incident Reenactment — Fictional)</title>
+  <style>
+    :root{--bg:#040404;--muted:#8b8b8b;--neon:#39ff14;--danger:#ff3b3b}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#d9f3d9}
+    body{line-height:1.4}
+    canvas#matrix{position:fixed;inset:0;z-index:0}
+    .wrap{position:relative;z-index:2;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px}
+    .card{width:min(1200px,96%);background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:12px;padding:14px;box-shadow:0 8px 40px rgba(0,0,0,0.6);backdrop-filter: blur(6px);border:1px solid rgba(57,255,20,0.04);display:grid;grid-template-columns:300px 1fr;gap:16px}
+    .face{background:linear-gradient(180deg, rgba(0,0,0,0.22), rgba(255,255,255,0.02));padding:14px;border-radius:10px;display:flex;flex-direction:column;align-items:center}
+    .avatar{width:220px;height:220px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:12px;background:linear-gradient(90deg,#032 0%, #021 100%);color:var(--neon);box-shadow:0 6px 20px rgba(57,255,20,0.06) inset}
+    .badge{margin-top:10px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:13px;color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
+    h1{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;margin:0;font-size:18px}
+    .handle{color:var(--neon);font-family:monospace;margin-top:8px}
+    .panel{background:#060606;border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.02)}
+    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    input,select{background:#070707;border:1px solid rgba(255,255,255,0.02);padding:8px;border-radius:8px;color:#d9f3d9;font-family:monospace}
+    .btn{padding:8px 12px;border-radius:8px;background:transparent;border:1px solid rgba(57,255,20,0.06);cursor:pointer;color:var(--neon);font-family:monospace}
+    .terminal{margin-top:12px;background:#020202;border-radius:10px;padding:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;color:#c3fbb0;font-size:13px;border:1px solid rgba(57,255,20,0.03);min-height:80px}
+    .timeline{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+    .event{padding:10px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
+    .event h4{margin:0 0 6px 0;font-size:14px}
+    .event p{margin:0;color:var(--muted);font-size:13px}
+    .danger{border-left:4px solid var(--danger)}
+    .fake-logs{font-family:monospace;background:#070707;padding:8px;border-radius:6px;color:var(--neon);max-height:160px;overflow:auto}
+    .tips{background:#081216;border-radius:8px;padding:10px;border:1px solid rgba(255,255,255,0.02);color:var(--muted)}
+    footer{color:var(--muted);text-align:center;padding:12px}
+    @media (max-width:900px){.card{grid-template-columns:1fr;gap:12px}.avatar{width:160px;height:160px}}
+  </style>
+</head>
+<body>
+
+  <canvas id="matrix"></canvas>
+  <div class="wrap">
+    <div class="card">
+      <div class="face">
+        <div class="avatar" aria-hidden="true">
+<pre>  .--.  
+ ( o_o) 
+  |\_/| 
+ /|   |\
+</pre>  <div class="div">
+  <a href="hacker_face_single_page (1).html">step 1</a>
+  <a href="index.html">step 3</a>
+</div>
+        </div>
+        <div class="badge">PHANTOM • INCIDENT MODE</div>
+        <h1>Fictional: "ReallyWorld" breach</h1>
+        <div class="handle">RE-ENACTMENT — not real</div>
+
+        <div class="panel" style="margin-top:12px">
+          <div style="font-size:13px;color:var(--muted)">Запуск безопасной визуализации инцидента:</div>
+          <div style="margin-top:8px" class="controls">
+            <button class="btn" id="playBtn">Play Reenactment</button>
+            <button class="btn" id="pauseBtn">Pause</button>
+            <button class="btn" id="resetBtn">Reset</button>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="tips">
+          <strong>Важно</strong>
+          <p style="margin-top:6px;color:var(--muted);font-size:13px">Эта страница демонстрирует сюжетно-интерактивную сцену — никаких реальных методов, уязвимостей или команд здесь нет. Нельзя использовать для атак.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-family:monospace;color:var(--neon)">REALLYWORLD — incident log (fictional)</div>
+            <div style="color:var(--muted);font-size:13px">Status: <span id="status" style="color:var(--neon)">idle</span></div>
+          </div>
+
+          <div id="timeline" class="timeline" style="margin-top:12px">
+            <!-- events injected here -->
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="fake-logs" id="fakeLogs">[logs will appear here — fictional entries only]</div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <button class="btn" id="showIR">Show Incident Response</button>
+            <button class="btn" id="exportBtn">Export Report (mock)</button>
+          </div>
+
+        </div>
+
+        <div id="irPanel" class="panel" style="margin-top:12px;display:none">
+          <h3 style="margin:0;color:var(--neon);font-family:monospace">Incident Response — High-level</h3>
+          <ul style="margin-top:8px;color:var(--muted)">
+            <li>1) Изолировать пострадавшие системы (отключить от сети).</li>
+            <li>2) Сохранить журналы и артефакты для анализа.</li>
+            <li>3) Сменить учетные данные и отключить скомпрометированные ключи.</li>
+            <li>4) Оповестить пользователей и заинтересованные стороны.</li>
+            <li>5) Восстановить из проверенных резервных копий, провести пост-инцидентный анализ.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <section style="padding:36px 24px">
+    <h2 style="color:var(--neon);font-family:monospace">Reenactment — what I added (safe & fictional)</h2>
+    <p style="color:var(--muted)">Я сделал визуальную историю: таймлайн с событиями, искусственные журналы (без реальных команд), индикатор статуса и панель с высокоуровневыми шагами реагирования. Это только образовательный рассказ — не инструктаж по взлому.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+      <div class="panel">
+        <h4 style="margin:0;color:var(--neon)">Fake Timeline</h4>
+        <p style="color:var(--muted);margin-top:8px">События показывают последовательность: обнаружение — эскалация — обнаружение утечки — реакция. Всё без технических деталей.</p>
+      </div>
+      <div class="panel">
+        <h4 style="margin:0;color:var(--neon)">Security Tips</h4>
+        <ul style="color:var(--muted);margin-top:8px">
+          <li>Держи ПО и сервисы в актуальном состоянии.</li>
+          <li>Включай двухфакторную аутентификацию.</li>
+          <li>Используй уникальные длинные пароли и менеджер паролей.</li>
+          <li>Бэкапь данные и проверяй целостность резервных копий.</li>
+          <li>Настрой мониторинг и уведомления о подозрительной активности.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>Made with ⚡ — fictional incident visualization — safe for demos</footer>
+
+  <script>
+    /* matrix background (same as before) */
+    (function(){
+      const canvas = document.getElementById('matrix');
+      const ctx = canvas.getContext('2d');
+      let w,h; const glyphs = '01│█░<>/\\*#%+-=()[]{}@'.split('');
+      function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;cols=Math.floor(w/14)+1;drops=new Array(cols).fill(1)}
+      let cols=0,drops=[]; function draw(){ctx.fillStyle='rgba(0,0,0,0.06)';ctx.fillRect(0,0,w,h);ctx.font='14px monospace';for(let i=0;i<cols;i++){const t=glyphs[Math.floor(Math.random()*glyphs.length)];const x=i*14;const y=drops[i]*14;ctx.fillStyle=i%12===0?'rgba(57,255,20,0.9)':'rgba(57,255,20,0.5)';ctx.fillText(t,x,y);if(y>h&&Math.random()>0.975)drops[i]=0;drops[i]++;}requestAnimationFrame(draw);}addEventListener('resize',resize);resize();draw();
+    })();
+
+    /* ===== Reenactment timeline (fictional, safe) ===== */
+    (function(){
+      const playBtn = document.getElementById('playBtn');
+      const pauseBtn = document.getElementById('pauseBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const timeline = document.getElementById('timeline');
+      const fakeLogs = document.getElementById('fakeLogs');
+      const status = document.getElementById('status');
+      const showIR = document.getElementById('showIR');
+      const irPanel = document.getElementById('irPanel');
+
+      const events = [
+        {t:'2025-11-03 10:12', title:'Detection: anomalous traffic', text:'Система обнаружила необычный всплеск активности. (fictional)'} ,
+        {t:'2025-11-03 10:20', title:'Investigation: odd log entries', text:'Инцидентный аналитик отметил подозрительные (фейковые) записи в логах.'},
+        {t:'2025-11-03 10:35', title:'Escalation: suspected data exposure', text:'Команда приоритизировала инцидент и инициировала изоляцию.'},
+        {t:'2025-11-03 11:05', title:'Containment: isolate systems', text:'Фиктивная сеть была изолирована и начат сбор артефактов для анализа.'},
+        {t:'2025-11-03 12:30', title:'Recovery: restore from backup', text:'Данные восстановлены из проверенных резервных копий (fictional).'}
+      ];
+
+      let idx=0; let running=false; let logInterval=null;
+
+      function renderEvent(i){
+        timeline.innerHTML = '';
+        for(let j=0;j<=i && j<events.length;j++){
+          const ev = events[j];
+          const div = document.createElement('div'); div.className='event' + (j===i? ' danger':'');
+          div.innerHTML = `<h4>${ev.t} — ${ev.title}</h4><p>${ev.text}</p>`;
+          timeline.appendChild(div);
+        }
+      }
+
+      function appendLogLine(){
+        const lines = [
+          '[INFO]  Service heartbeat OK',
+          '[WARN]  Unusual request rate detected',
+          '[INFO]  Auth attempt failed — username: demo_user',
+          '[INFO]  Backup snapshot completed',
+          '[ALERT]  Suspicious file hash found',
+          '[INFO]  Forensic snapshot stored (mock)'
+        ];
+        const line = lines[Math.floor(Math.random()*lines.length)];
+        fakeLogs.textContent = line + '\n' + fakeLogs.textContent;
+        if(fakeLogs.textContent.length>3000) fakeLogs.textContent = fakeLogs.textContent.slice(0,3000);
+      }
+
+      function start(){ if(running) return; running=true; status.textContent='running'; renderEvent(0); idx=0; fakeLogs.textContent=''; appendLogLine(); logInterval = setInterval(()=>{ appendLogLine(); idx++; if(idx<events.length) renderEvent(idx); if(idx>=events.length){ clearInterval(logInterval); status.textContent='finished'; running=false } },1500); }
+      function pause(){ if(!running) return; clearInterval(logInterval); running=false; status.textContent='paused'; }
+      function reset(){ clearInterval(logInterval); running=false; idx=0; status.textContent='idle'; timeline.innerHTML=''; fakeLogs.textContent='[logs will appear here — fictional entries only]'; }
+
+      playBtn.addEventListener('click', start);
+      pauseBtn.addEventListener('click', pause);
+      resetBtn.addEventListener('click', reset);
+
+      showIR.addEventListener('click', ()=>{ irPanel.style.display = irPanel.style.display==='none' ? 'block' : 'none'; });
+
+      // export mock report
+      document.getElementById('exportBtn').addEventListener('click', ()=>{
+        const report = `MOCK REPORT — ReallyWorld incident (fictional)\n\nEvents:\n${events.map(e=>e.t+' - '+e.title).join('\n')}\n\nNotes:\nThis is a mock, non-actionable report intended for demos.`;
+        const blob = new Blob([report], {type:'text/plain'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download='reallyworld_mock_report.txt'; a.click(); URL.revokeObjectURL(url);
+      });
+
+    })();
+  </script>
+</body>
+</html>

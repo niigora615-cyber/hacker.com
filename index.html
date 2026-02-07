@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HACKER FACE — CINEMATIC DEMO</title>
+
+<style>
+:root{
+  --neon:#39ff14;
+  --bg:#020402;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--neon);font-family:Consolas,monospace}
+canvas{position:fixed;inset:0;z-index:0}
+.app{position:relative;z-index:2;min-height:100vh;padding:14px;display:flex;justify-content:center;align-items:center}
+.panel{
+  width:100%;
+  max-width:900px;
+  background:rgba(0,0,0,.75);
+  border:1px solid #0f2;
+  border-radius:12px;
+  padding:14px;
+  box-shadow:0 0 40px rgba(57,255,20,.2);
+}
+h1{margin:0 0 10px;font-size:18px;text-align:center}
+.controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+select,button{
+  background:#031;
+  color:var(--neon);
+  border:1px solid #0f2;
+  padding:8px 12px;
+  border-radius:8px;
+}
+button{cursor:pointer}
+.terminal{
+  margin-top:12px;
+  background:#000;
+  border:1px solid #0f2;
+  border-radius:8px;
+  padding:10px;
+  height:260px;
+  overflow:auto;
+  font-size:13px;
+}
+.line{white-space:pre}
+.glitch{
+  animation:glitch 1.2s infinite;
+}
+@keyframes glitch{
+  0%{text-shadow:2px 0 red}
+  20%{text-shadow:-2px 0 cyan}
+  40%{text-shadow:2px 0 lime}
+  100%{text-shadow:0 0}
+}
+.progress{
+  margin-top:10px;
+  background:#031;
+  height:10px;
+  border-radius:6px;
+  overflow:hidden;
+}
+.bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#0f0,#9f9);
+  transition:width .3s;
+}
+@media(max-width:600px){
+  h1{font-size:16px}
+  .terminal{height:220px}
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="app">
+  <div class="panel">    <div class="div">
+  <a href="hacker_face_single_page (1).html">step 1</a>
+  <a href="hacker_face_single_page (2).html">step 2</a>
+</div>
+    <h1 class="glitch">HACKER FACE — PASSWORD BREACH SIMULATION</h1>
+
+    <div class="controls">
+      <select id="level">
+        <option value="easy">🧬 script-kiddie</option>
+        <option value="mid">🧠 pro</option>
+        <option value="hard">👑 legend</option>
+      </select>
+      <button id="start">▶ START</button>
+      <button id="reset">⟲ RESET</button>
+    </div>
+
+    <div class="progress"><div class="bar" id="bar"></div></div>
+
+    <div class="terminal" id="term"></div>
+  </div>
+</div>
+
+<script>
+/* MATRIX BACKGROUND */
+const c=document.getElementById("matrix"),x=c.getContext("2d");
+let w,h,cols,drops;
+function resize(){
+  w=c.width=innerWidth;
+  h=c.height=innerHeight;
+  cols=Math.floor(w/14);
+  drops=Array(cols).fill(1);
+}
+window.onresize=resize;resize();
+function draw(){
+  x.fillStyle="rgba(0,0,0,.05)";
+  x.fillRect(0,0,w,h);
+  x.fillStyle="#39ff14";
+  x.font="14px monospace";
+  drops.forEach((y,i)=>{
+    const t=Math.random()>0.5?"1":"0";
+    x.fillText(t,i*14,y*14);
+    if(y*14>h && Math.random()>0.98)drops[i]=0;
+    drops[i]++;
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* TERMINAL + FAKE PASSWORD */
+const term=document.getElementById("term");
+const bar=document.getElementById("bar");
+let timer=null,progress=0;
+
+const levels={
+  easy:80,
+  mid:140,
+  hard:220
+};
+
+function print(text){
+  const d=document.createElement("div");
+  d.className="line";
+  term.appendChild(d);
+  let i=0;
+  const t=setInterval(()=>{
+    d.textContent+=text[i];
+    i++;
+    term.scrollTop=term.scrollHeight;
+    if(i>=text.length)clearInterval(t);
+  },15);
+}
+
+function start(){
+  if(timer) return;
+  term.innerHTML="";
+  progress=0;
+  bar.style.width="0%";
+  const lvl=document.getElementById("level").value;
+  const speed=levels[lvl];
+
+  print("[INIT] Connecting to target node...");
+  setTimeout(()=>print("[OK] Secure channel established"),600);
+
+  timer=setInterval(()=>{
+    progress+=1;
+    bar.style.width=progress+"%";
+    print(`[BRUTE] trying password: ${Math.random().toString(36).slice(2,8)}`);
+    if(progress>=100){
+      clearInterval(timer);
+      timer=null;
+      print("[SUCCESS] Password matched (SIMULATION)");
+      print("[ACCESS] root privileges granted (FAKE)");
+    }
+  },speed);
+}
+
+function reset(){
+  clearInterval(timer);
+  timer=null;
+  term.innerHTML="";
+  bar.style.width="0%";
+  print("[SYSTEM] Ready");
+}
+
+document.getElementById("start").onclick=start;
+document.getElementById("reset").onclick=reset;
+reset();
+</script>
+</body>
+</html>
